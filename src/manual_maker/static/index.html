@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual Maker</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <strong class="brand">Manual Maker</strong>
+  <select id="project"></select>
+  <button id="newProject" title="新しいプロジェクト">＋</button>
+  <span class="sep"></span>
+  <button id="record" title="新しいコンソールで記録を開始（Ctrl+Shift+Q で終了）">● 記録</button>
+  <label class="chk"><input type="checkbox" id="fullscreen"> 全画面</label>
+  <span class="sep"></span>
+  <button id="describeAll">✦ Claudeで説明生成</button>
+  <label class="chk" title="手で編集した文も上書きする"><input type="checkbox" id="force"> 編集済みも上書き</label>
+  <button id="restructureOpen" title="補足や指示をもとに、除外・並べ替え・章分け・書き直しを行う">✦ Claudeで再構成</button>
+  <button id="undo" title="直前の再構成の前の状態に戻す">↶ 元に戻す</button>
+  <span class="sep"></span>
+  <button id="build" class="primary">PDF作成</button>
+  <span id="status"></span>
+</header>
+
+<section id="meta">
+  <label>タイトル <input id="mTitle" data-key="title"></label>
+  <label>対象アプリ <input id="mApp" data-key="app_name"></label>
+  <label>作成者 <input id="mAuthor" data-key="author"></label>
+  <label>作成日 <input id="mCreated" data-key="created"></label>
+  <label class="wide">はじめに <textarea id="mIntro" data-key="intro" rows="2"></textarea></label>
+</section>
+
+<main>
+  <aside id="steps"></aside>
+
+  <section id="center">
+    <div class="tabs">
+      <button data-tab="image" class="active">画像</button>
+      <button data-tab="pdf">PDFプレビュー</button>
+      <span class="hint" id="imgHint">画像をクリックするとマーカー位置を変更できます</span>
+    </div>
+    <div id="imageView">
+      <div id="imgWrap">
+        <img id="shot" alt="">
+        <div id="marker"></div>
+      </div>
+    </div>
+    <iframe id="pdfView" hidden></iframe>
+  </section>
+
+  <section id="editor">
+    <div id="noStep" class="empty">ステップがありません。「● 記録」で操作を記録してください。</div>
+    <div id="stepForm" hidden>
+      <h2 id="stepHeading"></h2>
+      <label>タイトル <input id="sTitle" data-key="title"></label>
+      <label>説明 <textarea id="sDesc" data-key="description" rows="6"></textarea></label>
+      <label>章 <input id="sSection" data-key="section" list="sectionList" placeholder="例: データの読み込み"></label>
+      <datalist id="sectionList"></datalist>
+      <label>補足（PDFに表示。「不要」「次とまとめる」など再構成への指示も書けます）
+        <textarea id="sNote" data-key="note" rows="3"></textarea></label>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="sHighlight"> クリック位置を強調</label>
+        <label class="chk"><input type="checkbox" id="sInclude"> PDFに含める</label>
+      </div>
+      <div class="row">
+        <button id="describeOne">✦ このステップを再生成</button>
+        <button id="deleteStep" class="danger">削除</button>
+      </div>
+      <dl id="stepInfo"></dl>
+    </div>
+  </section>
+</main>
+
+<dialog id="restructureDlg">
+  <form method="dialog">
+    <h3>Claude で再構成</h3>
+    <p class="hint">各ステップの「補足」に書いた指示と、下の全体指示をもとに、不要な手順の除外・並べ替え・章分け・文章の書き直しを行います。
+      画像は削除されません。実行前の状態は「↶ 元に戻す」で戻せます。</p>
+    <label>全体への指示（任意）
+      <textarea id="rsInstruction" rows="5" placeholder="例: GPU設定の手順は省く。初心者向けに丁寧に。章は「準備」「フィッティング」「結果の保存」の3つ。"></textarea>
+    </label>
+    <div class="row end">
+      <button value="cancel">キャンセル</button>
+      <button id="restructureRun" value="run" class="primary">再構成する</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="changesDlg">
+  <form method="dialog">
+    <h3>再構成の結果</h3>
+    <pre id="changesText"></pre>
+    <div class="row end"><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<div id="busy" hidden><div class="spinner"></div><span id="busyText"></span></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
