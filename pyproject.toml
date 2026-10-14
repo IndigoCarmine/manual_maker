@@ -3,6 +3,8 @@ name = "manual-maker"
 version = "0.1.0"
 description = "Record app operations, describe them with Claude Code, edit, and build a Typst manual"
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = [
     "pynput>=1.7.7",
     "mss>=9.0",
